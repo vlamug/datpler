@@ -1,0 +1,85 @@
+input:
+  syslog:
+  - name: "some_syslog_input"
+    listenAddr: ":20000"
+  api:
+  - name: "some_api_input"
+    listenAddr: ":9999"
+    path: "/my/api"
+template:
+  type: plain
+  pattern: "{{.remote_addr}} | {{.remote_user}} | {{.time_local}} | {{.request}} | {{.status}} | {{.body_bytes_sent}} | {{.http_referer}} | {{.http_user_agent}}"
+  delimiter: "|"
+metrics:
+- name: requests_total
+  type: counter
+  help: "Total requests"
+  expr: '{{if ne .http_code "1"}}12{{else}}{{end}}'
+  value: "1"
+- name: errors_total
+  type: counter
+  help: "Total Errors"
+  expr: '{{if ne .http_code "200"}}1{{end}}'
+  value: "1"
+- name: response_time_milliseconds
+  type: summary
+  objectives:
+  - quantile: 0.5
+    error: 0.05
+  - quantile: 0.9
+    error: 0.01
+  - quantile: 0.99
+    error: 0.001
+  value: "{{.duration}}"
+- name: response_size_histogram
+  type: histogram
+  buckets:
+  - 100
+  - 300
+  - 500
+  - 800
+  - 1200
+  - 1500
+  value: "{{.body_size}}"
+- name: host_requests_total
+  type: counterVec
+  help: "Total requests by host"
+  expr: '{{if ne .http_code "0"}}1{{end}}'
+  labels:
+  - name: "host"
+    value: "{{.host}}"
+  - name: "is_static"
+    value: "1"
+- name: active_mode
+  type: gaugeVec
+  help: "Current active mode"
+  value: "{{.mode}}"
+  labels:
+  - name: "host"
+    value: "{{.host}}"
+- name: host_response_time_milliseconds
+  type: summaryVec
+  objectives:
+  - quantile: 0.5
+    error: 0.05
+  - quantile: 0.9
+    error: 0.01
+  - quantile: 0.99
+    error: 0.001
+  value: "{{.duration}}"
+  labels:
+  - name: "host"
+    value: "{{.host}}"
+- name: host_response_size_histogram
+  type: histogramVec
+  buckets:
+  - 100
+  - 300
+  - 500
+  - 800
+  - 1200
+  - 1500
+  value: "{{.body_size}}"
+  labels:
+  - name: "host"
+    value: "{{.host}}"
