@@ -1,0 +1,16 @@
+language: go
+services:
+  - docker
+go:
+  - 1.11.x
+env:
+  matrix:
+    - GO111MODULE=on
+  global:
+    - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+script:
+  - make build
+  - docker build -t vlamug/metricplower:${TAG} .
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push vlamug/metricplower:${TAG}
