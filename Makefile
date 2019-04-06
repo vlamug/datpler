@@ -29,6 +29,6 @@ docker-push: docker-build
 	@echo ">>> pushing image..."
 	$(DOCKER) push $(DOCKER_VERSION)
 
-daemon: build
+run: build
 	@echo ">>> running app with logs in $(LOG_PATH) ..."
 	./$(BIN_PATH)/$(TARGET) > $(LOG_PATH) 2>&1 &
