@@ -3,12 +3,13 @@ package metrics
 import (
 	"bytes"
 	"fmt"
-	"github.com/prometheus/common/log"
 	"io/ioutil"
 	"strconv"
-	"text/template"
+
+	mptemplate "bitbucket.org/plowdata/datpler/pkg/template"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/log"
 )
 
 // Processor evaluates expr+value and exposes metrics
@@ -119,7 +120,7 @@ func (e *Processor) executeExpr(expr string, data map[string]string) (string, er
 		return expr, nil
 	}
 
-	tpl, err := template.New("metric").Parse(expr)
+	tpl, err := mptemplate.MakeTemplate("metric").Parse(expr)
 	if err != nil {
 		return "", fmt.Errorf("could not parse expression: %s, error: %s\n", expr, err)
 	}

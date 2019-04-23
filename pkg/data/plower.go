@@ -56,7 +56,7 @@ func (h *Plower) Plow() {
 				for line := range lines {
 					err := h.plowData(line)
 					if err != nil {
-						log.Errorf("error occurred during plow data for api input: %s", name)
+						log.Errorf("error occurred during plow data for api input: %s, error: %s", name, err)
 					}
 				}
 			}(in.Name, in.ListenAddr, in.Path)

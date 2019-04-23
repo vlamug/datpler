@@ -3,9 +3,9 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
-	"text/template"
 
 	"bitbucket.org/plowdata/datpler/pkg/metrics"
+	mptemplate "bitbucket.org/plowdata/datpler/pkg/template"
 
 	"gopkg.in/yaml.v2"
 )
@@ -29,7 +29,7 @@ func (cfg *Cfg) validate() error {
 }
 
 func (cfg *Cfg) validateTemplate() error {
-	_, err := template.New("template").Parse(cfg.Template.Pattern)
+	_, err := mptemplate.MakeTemplate("template").Parse(cfg.Template.Pattern)
 
 	return err
 }
