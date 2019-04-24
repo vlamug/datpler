@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"bitbucket.org/plowdata/datpler/pkg/metrics"
-	mptemplate "bitbucket.org/plowdata/datpler/pkg/template"
+	"github.com/vlamug/ratibor/pkg/metrics"
+	"github.com/vlamug/ratibor/pkg/template"
 
 	"gopkg.in/yaml.v2"
 )
@@ -29,7 +29,7 @@ func (cfg *Cfg) validate() error {
 }
 
 func (cfg *Cfg) validateTemplate() error {
-	_, err := mptemplate.MakeTemplate("template").Parse(cfg.Template.Pattern)
+	_, err := template.MakeTemplate("template").Parse(cfg.Template.Pattern)
 
 	return err
 }

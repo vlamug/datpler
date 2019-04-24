@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
-	mptemplate "bitbucket.org/plowdata/datpler/pkg/template"
+	"github.com/vlamug/ratibor/pkg/template"
 )
 
 var validMetricNameRegexp = regexp.MustCompile(`^[\w_]+$`)
@@ -135,7 +135,7 @@ func validateName(name string) bool {
 
 func validateExecutableValue(value string) error {
 	if value != "" && IsExecutable(value) {
-		_, err := mptemplate.MakeTemplate("value").Parse(value)
+		_, err := template.MakeTemplate("value").Parse(value)
 		if err != nil {
 			return err
 		}

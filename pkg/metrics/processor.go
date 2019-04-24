@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strconv"
 
-	mptemplate "bitbucket.org/plowdata/datpler/pkg/template"
+	"github.com/vlamug/ratibor/pkg/template"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
@@ -120,7 +120,7 @@ func (e *Processor) executeExpr(expr string, data map[string]string) (string, er
 		return expr, nil
 	}
 
-	tpl, err := mptemplate.MakeTemplate("metric").Parse(expr)
+	tpl, err := template.MakeTemplate("metric").Parse(expr)
 	if err != nil {
 		return "", fmt.Errorf("could not parse expression: %s, error: %s\n", expr, err)
 	}

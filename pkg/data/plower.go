@@ -1,10 +1,10 @@
 package data
 
 import (
-	"bitbucket.org/plowdata/datpler/config"
-	"bitbucket.org/plowdata/datpler/pkg/input"
-	"bitbucket.org/plowdata/datpler/pkg/metrics"
-	"bitbucket.org/plowdata/datpler/pkg/parser"
+	"github.com/vlamug/ratibor/config"
+	"github.com/vlamug/ratibor/pkg/input"
+	"github.com/vlamug/ratibor/pkg/metrics"
+	"github.com/vlamug/ratibor/pkg/parser"
 
 	"github.com/prometheus/common/log"
 )

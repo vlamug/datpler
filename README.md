@@ -1,6 +1,6 @@
-# DatPler
+# Ratibor
 
-It plows data and exposes metrics readable by Prometheus.
+It receives data and exposes metrics based on this data readable by Prometheus.
 
 ## Config
 
@@ -29,7 +29,7 @@ metrics:
 
 ### Supported types
 
-DatPler supports the following types of templates:
+Ratibor supports the following types of templates:
  - `plain`: is a one line data, the data in which are splitted by delimiter. For example: `value 1 | value 2 | value 3`. The delimiter is `|`.
 
 
