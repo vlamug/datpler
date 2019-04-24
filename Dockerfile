@@ -1,5 +1,5 @@
 FROM alpine:latest
 
-COPY bin/metricplower /usr/bin
+COPY bin/ratibor /usr/bin
 
-ENTRYPOINT ["/usr/bin/metricplower"]
+ENTRYPOINT ["/usr/bin/ratibor"]

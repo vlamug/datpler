@@ -6,11 +6,11 @@ import (
 	"text/template"
 )
 
-type extracter struct {
+type extractor struct {
 	compiledRegExpr map[string]*regexp.Regexp
 }
 
-func (e *extracter) extractRegExp(regExpr string, s string) string {
+func (e *extractor) extractRegExp(regExpr string, s string) string {
 	if _, ok := e.compiledRegExpr[regExpr]; !ok {
 		e.compiledRegExpr[regExpr] = regexp.MustCompile(regExpr)
 	}
@@ -18,8 +18,9 @@ func (e *extracter) extractRegExp(regExpr string, s string) string {
 	return e.compiledRegExpr[regExpr].FindString(s)
 }
 
+// MakeTemplate makes template extended with functions
 func MakeTemplate(name string) *template.Template {
-	extr := extracter{compiledRegExpr: make(map[string]*regexp.Regexp)}
+	extr := extractor{compiledRegExpr: make(map[string]*regexp.Regexp)}
 
 	funcs := template.FuncMap{
 		"contains":      strings.Contains,

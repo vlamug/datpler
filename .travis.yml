@@ -10,7 +10,7 @@ env:
     - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 script:
   - make build
-  - docker build -t vlamug/metricplower:${TAG} .
+  - docker build -t vlamug/ratibor:${TAG} .
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push vlamug/metricplower:${TAG}
+  - docker push vlamug/ratibor:${TAG}

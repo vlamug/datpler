@@ -1,5 +1,5 @@
-TARGET := metricplower
-TARGET_PATH := cmd/metricplower/main.go
+TARGET := ratibor
+TARGET_PATH := cmd/ratibor/main.go
 BIN_PATH := bin
 
 VERSION := $(shell sh -c 'git describe --always --tags')
@@ -10,7 +10,7 @@ DOCKER := docker
 GOOS ?= linux
 GOARCH ?= amd64
 
-LOG_PATH ?= /var/log/metricplower/metricplower.logs
+LOG_PATH ?= /var/log/ratibor/ratibor.logs
 
 build:
 	@echo ">>> building binary ..."
