@@ -16,21 +16,27 @@ type Metric struct {
 	Help       string      `yaml:"help"`
 	Expr       string      `yaml:"expr"`
 	Value      string      `yaml:"value"`
-	Objectives []Objective `json:"objectives"`
-	Buckets    []float64   `json:"buckets"`
-	Labels     []Label     `json:"labels"`
+	Objectives []Objective `yaml:"objectives"`
+	Buckets    []float64   `yaml:"buckets"`
+	Labels     []Label     `yaml:"labels"`
 
 	metric interface{}
 }
 
 type Objective struct {
-	Quantile float64 `json:"quantile"`
-	Error    float64 `json:"error"`
+	Quantile float64 `yaml:"quantile"`
+	Error    float64 `yaml:"error"`
 }
 
 type Label struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name   string  `yaml:"name"`
+	Value  string  `yaml:"value"`
+	Values []Value `yaml:"values"`
+}
+
+type Value struct {
+	Value string `yaml:"value"`
+	Expr  string `yaml:"expr"`
 }
 
 func (m *Metric) ObjectivesValues() map[float64]float64 {
@@ -49,16 +55,6 @@ func (m *Metric) LabelNames() []string {
 	}
 
 	return names
-}
-
-func (m *Metric) validateLabels() error {
-	for _, lb := range m.Labels {
-		if err := validateExecutableValue(lb.Value); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func (m *Metric) Validate() error {
@@ -96,6 +92,28 @@ func (m *Metric) Validate() error {
 	} else {
 		if len(m.Labels) > 0 {
 			return errors.New("specified labels are redundant for not vector metric")
+		}
+	}
+
+	return nil
+}
+
+func (m *Metric) validateLabels() error {
+	for _, lb := range m.Labels {
+		if err := validateExecutableValue(lb.Value); err != nil {
+			return errors.New(fmt.Sprintf("label value cannot be executable: %s", err))
+		}
+
+		for _, val := range lb.Values {
+			if val.Value == "" && val.Expr == "" {
+				return errors.New("`value` or `expr` in label value are required")
+			}
+			if err := validateExecutableValue(val.Value); err != nil {
+				return errors.New(fmt.Sprintf("one of the label value cannot be executable: %s", err))
+			}
+			if err := validateExecutableValue(val.Expr); err != nil {
+				return errors.New(fmt.Sprintf("one of the label expr cannot be executable: %s", err))
+			}
 		}
 	}
 

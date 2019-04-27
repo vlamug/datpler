@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"strconv"
 
 	"github.com/vlamug/ratibor/pkg/template"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/common/log"
 )
 
 // Processor evaluates expr+value and exposes metrics
@@ -85,7 +85,12 @@ func (e *Processor) Process(data map[string]string) error {
 		}
 
 		// if it is not vector type, empty slice will be returned
-		labelValues := e.executeLabels(metric.Labels, data)
+		var labelValues []string
+		if needExpose, lvs := e.executeLabels(metric.Labels, data); !needExpose {
+			continue
+		} else {
+			labelValues = lvs
+		}
 
 		switch metric.Type {
 		case counterMetricType:
@@ -139,23 +144,53 @@ func (e *Processor) executeExpr(expr string, data map[string]string) (string, er
 	return string(res), nil
 }
 
-func (e *Processor) executeLabels(labels []Label, data map[string]string) []string {
+func (e *Processor) executeLabels(labels []Label, data map[string]string) (bool, []string) {
 	labelValues := make([]string, len(labels))
 	for k, lb := range labels {
 		var (
-			err        error
 			labelValue = lb.Value
+			err        error
 		)
+		if len(lb.Values) != 0 {
+			for _, val := range lb.Values {
+				if val.Expr != "" {
+					expr, err := e.executeExpr(val.Expr, data)
+					if err != nil {
+						log.Printf("could not execute one of label expr: %s\n", err)
+						return false, nil
+					}
+					if expr == "" {
+						continue
+					}
+				}
 
-		if IsExecutable(lb.Value) {
-			labelValue, err = e.executeExpr(lb.Value, data)
-			if err != nil {
-				log.Warnf("could not execute label value: %s", labelValue)
+				labelValue, err = e.executeExpr(val.Value, data)
+				if err != nil {
+					log.Printf("could not execute one of label value: %s\n", err)
+					return false, nil
+				}
+
+				break
+			}
+
+			// if there is no computed value, it means that the exposing should be skipped
+			if labelValue == "" {
+				log.Printf("there is no any value for label: %s\n", lb.Name)
+				return false, nil
+			}
+		} else {
+
+			if IsExecutable(lb.Value) {
+				labelValue, err = e.executeExpr(lb.Value, data)
+				if err != nil {
+					log.Printf("could not execute label value: %s\n", err)
+					return false, nil
+				}
 			}
 		}
 
 		labelValues[k] = labelValue
 	}
 
-	return labelValues
+	return true, labelValues
 }
