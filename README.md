@@ -182,6 +182,24 @@ Examples:
 # float64(1) will be used as metric value
 ```
 
+### Label value evaluation
+
+```yaml
+- name: handler_total_requests
+  type: counterVec
+  help: "Total requests by handler"
+  value: 1
+  labels:
+  - name: "status"
+    value: "{{.status}}"
+  - name: "handler"
+    values:
+    - expr: "{{if contains .request `blog`}}1{{end}}"
+      value: "{{ extractRegExp `\\/blog\\/[a-zA-Z-_\\/]+` .request }}"
+    - expr: "{{if eq .request `/`}}1{{end}}"
+      value: "home"
+    - value: "{{if contains .request `forum`}}{{ extractRegExp `\\/forum\\/[a-zA-Z-_\\/]+` .request }}{{end}}"
+```
 
 ### Inputs
 
