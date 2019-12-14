@@ -1,6 +1,6 @@
 # Ratibor
 
-It plows data and exposes metrics based on this data readable for Prometheus.
+This app plows data via several ways(syslog, api, client) and exposes metrics based on this data readable for Prometheus. Metrics are configurable via config file flexibly, see examples below.
 
 ## Config
 
